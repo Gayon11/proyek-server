@@ -1,0 +1,114 @@
+/* File: client/src/components/docs/DocEditor.css */
+
+.doc-editor-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  background-color: #fff;
+}
+
+.doc-header {
+  padding: 15px 20px;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #fafafa;
+  flex-shrink: 0;
+}
+
+.doc-title-input {
+  font-size: 1.2rem;
+  font-weight: 600;
+  border: none;
+  outline: none;
+  width: 60%; /* Kurangi sedikit biar muat tombol hapus */
+  background: transparent;
+  color: #333;
+}
+
+.doc-title-input::placeholder {
+  color: #ccc;
+}
+
+/* Wrapper untuk tombol-tombol di kanan header */
+.doc-actions {
+  display: flex;
+  gap: 10px; /* Jarak antar tombol */
+}
+
+/* === PERBAIKAN POSISI TEKS TOMBOL === */
+.save-btn {
+  padding: 8px 16px;
+  background-color: #552a56;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+
+  /* Gunakan Flexbox untuk centering teks */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px; /* Tetapkan tinggi agar konsisten */
+}
+
+.save-btn:hover {
+  background-color: #7a4a7b;
+}
+
+.save-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* Style Baru untuk Tombol Hapus */
+.delete-doc-btn {
+  padding: 0 16px;
+  background-color: #d93025; /* Merah */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+}
+
+.delete-doc-btn:hover {
+  background-color: #b02a22;
+}
+
+/* Sisa CSS Editor (Tetap sama) */
+.editor-wrapper {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.quill-editor {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.ql-toolbar {
+  border-top: none !important;
+  border-left: none !important;
+  border-right: none !important;
+  background-color: #fcfcfc;
+}
+.ql-container {
+  flex-grow: 1;
+  overflow-y: auto;
+  font-size: 1rem;
+  border: none !important;
+}
+.ql-editor {
+  padding: 20px 30px;
+  min-height: 100%;
+}

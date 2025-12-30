@@ -1,0 +1,136 @@
+/* File: client/src/components/contacts/ContactList.css */
+
+.contact-list-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%; /* Pastikan lebar penuh */
+  background-color: #fff;
+  border-right: 1px solid #e0e0e0;
+  overflow: hidden; /* Mencegah scroll ganda */
+}
+
+.contact-header-main {
+  padding: 20px;
+  font-weight: bold;
+  color: #3f0e40;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #fdfdfd;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.contact-scroll-area {
+  flex-grow: 1;
+  overflow-y: auto;
+  background-color: #fff;
+}
+
+/* Header Grup */
+.contact-group-header {
+  padding: 10px 20px;
+  background-color: #f4f4f4;
+  color: #666;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid #eee;
+  border-top: 1px solid #eee;
+}
+
+/* Item User */
+.contact-list-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  border-bottom: 1px solid #f9f9f9;
+}
+
+.contact-list-item:hover {
+  background-color: #e8f0fe;
+}
+
+/* Avatar */
+.contact-list-avatar-container {
+  position: relative;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.contact-list-avatar {
+  width: 40px;
+  height: 40px;
+  background-color: #3f0e40;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1rem;
+  overflow: hidden; /* Agar gambar bulat */
+}
+
+/* Indikator Online */
+.online-indicator {
+  width: 10px;
+  height: 10px;
+  background-color: #2ecc71;
+  border: 2px solid white;
+  border-radius: 50%;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
+
+/* Info Teks */
+.contact-list-info {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* Agar teks panjang terpotong */
+}
+
+.contact-list-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.contact-list-email {
+  font-size: 0.8rem;
+  color: #888;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Ikon Chat */
+.contact-list-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.contact-list-action i {
+  color: #ccc;
+  font-size: 1.2rem;
+  transition: color 0.2s;
+}
+
+.contact-list-item:hover .contact-list-action i {
+  color: #3f0e40;
+}
+
+.empty-search {
+  padding: 30px;
+  text-align: center;
+  color: #888;
+  font-style: italic;
+}

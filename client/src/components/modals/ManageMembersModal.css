@@ -1,0 +1,233 @@
+/* File: client/src/components/modals/ManageMembersModal.css */
+
+/* --- 1. Overlay & Container --- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  backdrop-filter: blur(2px);
+}
+
+.modal-content {
+  background: white;
+  padding: 15px; /* Padding luar kecil */
+  border-radius: 8px;
+  width: 100%;
+  max-width: 380px;
+  /* PENTING: Gunakan 'auto' agar tinggi menyesuaikan isi, tidak memanjang ke bawah */
+  height: auto;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  /* Gap 0 agar kita bisa atur margin manual tiap elemen */
+  gap: 0;
+  outline: none;
+  font-family: inherit;
+}
+
+/* --- 2. Header Modal (Atur Anggota) --- */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 8px;
+  margin-bottom: 10px; /* Jarak ke konten di bawahnya */
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1rem;
+  color: #3f0e40;
+  font-weight: 700;
+}
+
+.modal-close-btn {
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  color: #aaa;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+.modal-close-btn:hover {
+  color: #333;
+}
+
+/* --- 3. Label Kecil (ANGGOTA SAAT INI / PILIH USER) --- */
+.current-members-list h4,
+.form-group label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #888;
+  margin: 0 0 4px 0; /* Hapus margin besar, sisakan sedikit saja */
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* --- 4. Judul Section (TAMBAH ANGGOTA BARU) --- */
+/* Target elemen h3/h4 di dalam body modal untuk menghapus coretan oranye pertama */
+.modal-content > h3,
+.modal-content > h4 {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #333;
+  margin-top: 10px; /* Jarak dari list anggota di atasnya */
+  margin-bottom: 8px; /* Jarak ke input di bawahnya */
+}
+
+/* --- 5. List Anggota --- */
+.member-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 5px 0; /* Margin bawah kecil */
+  max-height: 120px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+}
+
+.member-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 10px;
+  border-bottom: 1px solid #eee;
+  font-size: 0.85rem;
+  color: #333;
+}
+.member-list li:last-child {
+  border-bottom: none;
+}
+
+.member-list li span {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+  font-weight: 500;
+}
+.member-list li small {
+  font-size: 0.7rem;
+  color: #999;
+}
+
+.remove-member-btn {
+  background: white;
+  border: 1px solid #e74c3c;
+  color: #e74c3c;
+  font-size: 0.65rem;
+  padding: 2px 6px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-weight: 600;
+}
+.remove-member-btn:hover {
+  background: #e74c3c;
+  color: white;
+}
+
+/* --- 6. Form Group (Hapus Coretan Oranye Kedua) --- */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 8px; /* Jarak antara input dan tombol */
+}
+
+.form-group select {
+  width: 100%;
+  padding: 6px;
+  font-size: 0.85rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: white;
+  height: 34px;
+}
+
+/* --- 7. Tombol Aksi (Hapus Coretan Oranye Ketiga) --- */
+.form-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 0; /* Pastikan tidak ada margin tambahan di atas tombol */
+}
+
+.btn-cancel,
+.btn-submit {
+  flex: 1;
+  border: none;
+  padding: 0;
+  height: 34px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.btn-cancel {
+  background: #f1f1f1;
+  color: #333;
+}
+.btn-cancel:hover {
+  background: #e0e0e0;
+}
+.btn-submit {
+  background: #3f0e40;
+  color: white;
+}
+.btn-submit:hover {
+  background: #2a092b;
+}
+.btn-submit:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+/* --- 8. Divider & Danger Zone (Hapus Coretan Oranye Bawah) --- */
+.divider {
+  border: none;
+  border-top: 1px solid #eee;
+  margin: 12px 0; /* Divider tipis dengan jarak pas */
+}
+
+.danger-zone {
+  margin-top: 0;
+  padding: 0;
+}
+
+/* Sembunyikan teks label "Zona Berbahaya" agar bersih */
+.danger-zone h4,
+.danger-zone p {
+  display: none;
+}
+
+.btn-danger {
+  width: 100%;
+  padding: 0;
+  height: 34px;
+  background-color: white;
+  color: #e74c3c;
+  border: 1px solid #e74c3c;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.btn-danger:hover {
+  background: #e74c3c;
+  color: white;
+}

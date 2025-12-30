@@ -1,0 +1,30 @@
+/* File: client/src/components/layout/Sidebar.css */
+
+/* --- TOMBOL LOGOUT BULAT (VERSI KECIL) --- */
+.logout-btn {
+  width: 20px; /* Ukuran diperkecil lagi */
+  height: 20px; /* Ukuran diperkecil lagi */
+  border-radius: 50%; /* Bulat sempurna */
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #aaa; /* Warna ikon default */
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-color: rgba(255, 255, 255, 0.05); /* Background tipis */
+
+  font-size: 0.75rem; /* Ukuran ikon disesuaikan */
+  padding: 0;
+  line-height: 1;
+  margin-left: 5px; /* Sedikit jarak dari teks nama jika perlu */
+}
+
+/* Efek saat Mouse Diarahkan (Hover) */
+.logout-btn:hover {
+  background-color: #d93025; /* Merah */
+  color: white;
+  transform: scale(1.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
