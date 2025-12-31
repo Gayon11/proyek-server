@@ -19,13 +19,13 @@ const AdminDashboard = () => {
       const token = localStorage.getItem("token");
       const config = { headers: { "x-auth-token": token } };
 
-      const resPending = await axios.get("http://203.194.115.16:5000/api/users/pending", config);
+      const resPending = await axios.get("https://203.194.115.16.nip.io/api/users/pending", config);
       setPendingUsers(resPending.data);
 
-      const resAll = await axios.get("http://203.194.115.16:5000/api/users/all", config);
+      const resAll = await axios.get("https://203.194.115.16.nip.io/api/users/all", config);
       setAllUsers(resAll.data);
 
-      const resReset = await axios.get("http://203.194.115.16:5000/api/admin/reset-requests", config);
+      const resReset = await axios.get("https://203.194.115.16.nip.io/api/admin/reset-requests", config);
       setResetRequests(resReset.data);
     } catch (err) {
       console.error("Gagal ambil data admin:", err);
@@ -45,7 +45,7 @@ const AdminDashboard = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.post(
-        `http://203.194.115.16:5000/api/users/approve/${userId}`,
+        `https://203.194.115.16.nip.io/api/users/approve/${userId}`,
         {},
         {
           headers: { "x-auth-token": token },
@@ -67,7 +67,7 @@ const AdminDashboard = () => {
     setProcessingId(userId);
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`http://203.194.115.16:5000/api/users/${userId}`, {
+      await axios.delete(`https://203.194.115.16.nip.io/api/users/${userId}`, {
         headers: { "x-auth-token": token },
       });
       alert(`Pendaftaran ${username} ditolak dan dihapus.`);
@@ -87,7 +87,7 @@ const AdminDashboard = () => {
     }
     try {
       const token = localStorage.getItem("token");
-      await axios.put(`http://203.194.115.16:5000/api/users/${userId}/role`, { role: newRole }, { headers: { "x-auth-token": token } });
+      await axios.put(`https://203.194.115.16.nip.io/api/users/${userId}/role`, { role: newRole }, { headers: { "x-auth-token": token } });
       alert("Role berhasil diubah!");
       fetchData();
     } catch (err) {
@@ -103,7 +103,7 @@ const AdminDashboard = () => {
 
     try {
       const token = localStorage.getItem("token");
-      await axios.put(`http://203.194.115.16:5000/api/users/${userId}/status`, { is_active: !currentStatus }, { headers: { "x-auth-token": token } });
+      await axios.put(`https://203.194.115.16.nip.io/api/users/${userId}/status`, { is_active: !currentStatus }, { headers: { "x-auth-token": token } });
       alert(`Status akun ${username} berhasil diperbarui.`);
       fetchData();
     } catch (err) {
@@ -117,7 +117,7 @@ const AdminDashboard = () => {
 
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`http://203.194.115.16:5000/api/users/${userId}`, {
+      await axios.delete(`https://203.194.115.16.nip.io/api/users/${userId}`, {
         headers: { "x-auth-token": token },
       });
       alert(`User ${username} dihapus permanen.`);
@@ -134,7 +134,7 @@ const AdminDashboard = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.post(
-        `http://203.194.115.16:5000/api/admin/approve-reset/${userId}`,
+        `https://203.194.115.16.nip.io/api/admin/approve-reset/${userId}`,
         {},
         {
           headers: { "x-auth-token": token },
@@ -155,7 +155,7 @@ const AdminDashboard = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.post(
-        `http://203.194.115.16:5000/api/admin/reject-reset/${userId}`,
+        `https://203.194.115.16.nip.io/api/admin/reject-reset/${userId}`,
         {},
         {
           headers: { "x-auth-token": token },
@@ -177,7 +177,7 @@ const AdminDashboard = () => {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.post(
-        "http://203.194.115.16:5000/api/admin/backup",
+        "https://203.194.115.16.nip.io/api/admin/backup",
         {},
         {
           headers: { "x-auth-token": token },

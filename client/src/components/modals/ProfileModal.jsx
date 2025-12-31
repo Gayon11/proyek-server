@@ -30,7 +30,7 @@ const ProfileModal = ({ isOpen, onClose }) => {
   const fetchProfile = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get("http://203.194.115.16:5000/api/users/profile", {
+      const res = await axios.get("https://203.194.115.16.nip.io/api/users/profile", {
         headers: { "x-auth-token": token },
       });
       setFormData(res.data);
@@ -69,7 +69,7 @@ const ProfileModal = ({ isOpen, onClose }) => {
 
     try {
       const token = localStorage.getItem("token");
-      await axios.put("http://203.194.115.16:5000/api/users/profile", data, {
+      await axios.put("https://203.194.115.16.nip.io/api/users/profile", data, {
         headers: {
           "x-auth-token": token,
           "Content-Type": "multipart/form-data",
@@ -93,7 +93,7 @@ const ProfileModal = ({ isOpen, onClose }) => {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.post(
-        "http://203.194.115.16:5000/api/users/backup-self",
+        "https://203.194.115.16.nip.io/api/users/backup-self",
         {},
         {
           headers: { "x-auth-token": token },
@@ -113,7 +113,7 @@ const ProfileModal = ({ isOpen, onClose }) => {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.post(
-        "http://203.194.115.16:5000/api/auth/request-reset",
+        "https://203.194.115.16.nip.io/api/auth/request-reset",
         {},
         {
           headers: { "x-auth-token": token },
@@ -127,7 +127,7 @@ const ProfileModal = ({ isOpen, onClose }) => {
   };
   // --------------------------------------------
 
-  const displayAvatar = preview ? preview : formData.avatar_url ? `http://203.194.115.16:5000${formData.avatar_url}` : "https://via.placeholder.com/150";
+  const displayAvatar = preview ? preview : formData.avatar_url ? `https://203.194.115.16.nip.io${formData.avatar_url}` : "https://via.placeholder.com/150";
 
   return (
     <Modal isOpen={isOpen} onRequestClose={onClose} className="modal-content" overlayClassName="modal-overlay">

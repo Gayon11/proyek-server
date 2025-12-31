@@ -31,7 +31,7 @@ const ChatHeader = ({ channelId, channelName, onGroupDeleted, isPrivate }) => {
     const fetchHeaderInfo = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get("http://203.194.115.16:5000/api/channels", {
+        const res = await axios.get("https://203.194.115.16.nip.io/api/channels", {
           headers: { "x-auth-token": token },
         });
 
@@ -44,7 +44,7 @@ const ChatHeader = ({ channelId, channelName, onGroupDeleted, isPrivate }) => {
             if (otherMember) {
               setDisplayData({
                 name: `${otherMember.username} (${otherMember.role})`,
-                avatar: otherMember.avatar_url ? `http://203.194.115.16:5000${otherMember.avatar_url}` : null,
+                avatar: otherMember.avatar_url ? `https://203.194.115.16.nip.io${otherMember.avatar_url}` : null,
                 isDm: true,
               });
             } else {
@@ -54,7 +54,7 @@ const ChatHeader = ({ channelId, channelName, onGroupDeleted, isPrivate }) => {
             // LOGIKA GRUP
             setDisplayData({
               name: current.name,
-              avatar: current.avatar_url ? `http://203.194.115.16:5000${current.avatar_url}` : null,
+              avatar: current.avatar_url ? `https://203.194.115.16.nip.io${current.avatar_url}` : null,
               isDm: false,
             });
           }
@@ -84,13 +84,13 @@ const ChatHeader = ({ channelId, channelName, onGroupDeleted, isPrivate }) => {
 
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.put(`http://203.194.115.16:5000/api/channels/${channelId}/avatar`, formData, {
+      const res = await axios.put(`https://203.194.115.16.nip.io/api/channels/${channelId}/avatar`, formData, {
         headers: { "x-auth-token": token, "Content-Type": "multipart/form-data" },
       });
 
       setDisplayData((prev) => ({
         ...prev,
-        avatar: `http://203.194.115.16:5000${res.data.avatar_url}`,
+        avatar: `https://203.194.115.16.nip.io${res.data.avatar_url}`,
       }));
 
       alert("Foto berhasil diganti!");
@@ -107,7 +107,7 @@ const ChatHeader = ({ channelId, channelName, onGroupDeleted, isPrivate }) => {
     if (!window.confirm("Hapus obrolan ini dari daftar Anda?")) return;
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.delete(`http://203.194.115.16:5000/api/channels/${channelId}/leave`, { headers: { "x-auth-token": token } });
+      const res = await axios.delete(`https://203.194.115.16.nip.io/api/channels/${channelId}/leave`, { headers: { "x-auth-token": token } });
       if (onGroupDeleted) onGroupDeleted(res.data.deletedChannelId);
     } catch (err) {
       alert("Gagal menghapus.");
@@ -118,7 +118,7 @@ const ChatHeader = ({ channelId, channelName, onGroupDeleted, isPrivate }) => {
     if (!window.confirm("Hapus grup permanen?")) return;
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`http://203.194.115.16:5000/api/channels/${channelId}`, { headers: { "x-auth-token": token } });
+      await axios.delete(`https://203.194.115.16.nip.io/api/channels/${channelId}`, { headers: { "x-auth-token": token } });
       if (onGroupDeleted) onGroupDeleted(channelId);
     } catch (err) {
       alert("Gagal menghapus grup.");

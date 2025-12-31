@@ -23,12 +23,12 @@ const ManageMembersModal = ({ isOpen, onClose, channelId, onGroupDeleted }) => {
       const token = localStorage.getItem("token");
       try {
         // 1. Ambil DAFTAR ANGGOTA SAAT INI
-        const membersRes = await axios.get(`http://203.194.115.16:5000/api/channels/${channelId}/members`, {
+        const membersRes = await axios.get(`https://203.194.115.16.nip.io/api/channels/${channelId}/members`, {
           headers: { "x-auth-token": token },
         });
         setCurrentMembers(membersRes.data); // 2. Ambil SEMUA USER
 
-        const usersRes = await axios.get("http://203.194.115.16:5000/api/users", {
+        const usersRes = await axios.get("https://203.194.115.16.nip.io/api/users", {
           headers: { "x-auth-token": token },
         }); // 3. Filter user: Tampilkan hanya user yang BELUM JADI ANGGOTA
 
@@ -63,7 +63,7 @@ const ManageMembersModal = ({ isOpen, onClose, channelId, onGroupDeleted }) => {
     setLoading(true);
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.post(`http://203.194.115.16:5000/api/channels/${channelId}/members`, { userId: selectedUser }, { headers: { "x-auth-token": token } });
+      const res = await axios.post(`https://203.194.115.16.nip.io/api/channels/${channelId}/members`, { userId: selectedUser }, { headers: { "x-auth-token": token } });
       const newUser = res.data.member;
       setCurrentMembers((prevMembers) => [...prevMembers, newUser]);
       setAllUsers((prevUsers) => prevUsers.filter((u) => u.user_id !== newUser.user_id));
@@ -85,7 +85,7 @@ const ManageMembersModal = ({ isOpen, onClose, channelId, onGroupDeleted }) => {
     setError("");
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`http://203.194.115.16:5000/api/channels/${channelId}/members/${userToRemove.user_id}`, { headers: { "x-auth-token": token } });
+      await axios.delete(`https://203.194.115.16.nip.io/api/channels/${channelId}/members/${userToRemove.user_id}`, { headers: { "x-auth-token": token } });
       setCurrentMembers((prevMembers) => prevMembers.filter((m) => m.user_id !== userToRemove.user_id));
       setAllUsers((prevUsers) => [...prevUsers, userToRemove]);
     } catch (err) {
@@ -108,7 +108,7 @@ const ManageMembersModal = ({ isOpen, onClose, channelId, onGroupDeleted }) => {
     setError("");
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.delete(`http://203.194.115.16:5000/api/channels/${channelId}`, { headers: { "x-auth-token": token } });
+      const res = await axios.delete(`https://203.194.115.16.nip.io/api/channels/${channelId}`, { headers: { "x-auth-token": token } });
       onGroupDeleted(res.data.deletedChannelId);
       onClose();
     } catch (err) {

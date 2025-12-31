@@ -47,12 +47,12 @@ const EventModal = ({ isOpen, onClose, selectedEvent, onEventSaved, onDelete }) 
     try {
       if (selectedEvent && selectedEvent.event_id) {
         // UPDATE
-        await axios.put(`http://203.194.115.16:5000/api/events/${selectedEvent.event_id}`, eventData, {
+        await axios.put(`https://203.194.115.16.nip.io/api/events/${selectedEvent.event_id}`, eventData, {
           headers: { "x-auth-token": token },
         });
       } else {
         // CREATE
-        await axios.post(`http://203.194.115.16:5000/api/events`, eventData, {
+        await axios.post(`https://203.194.115.16.nip.io/api/events`, eventData, {
           headers: { "x-auth-token": token },
         });
       }

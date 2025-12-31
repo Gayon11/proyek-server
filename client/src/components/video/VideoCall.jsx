@@ -38,7 +38,7 @@ const VideoCall = () => {
   const [isScreenSharing, setIsScreenSharing] = useState(false);
 
   useEffect(() => {
-    socketRef.current = io.connect("http://203.194.115.16:5000");
+    socketRef.current = io.connect("https://203.194.115.16.nip.io");
 
     // 1. Cek Role Saat Join
     socketRef.current.on("your role", (data) => {

@@ -38,7 +38,7 @@ const DocEditor = ({ selectedDoc, onDocSaved, onDocDeleted }) => {
     try {
       if (selectedDoc && selectedDoc.doc_id) {
         // UPDATE
-        await axios.put(`http://203.194.115.16:5000/api/documents/${selectedDoc.doc_id}`, { title, content }, { headers: { "x-auth-token": token } });
+        await axios.put(`https://203.194.115.16.nip.io/api/documents/${selectedDoc.doc_id}`, { title, content }, { headers: { "x-auth-token": token } });
 
         socket.emit("docSaved", {
           docId: selectedDoc.doc_id,
@@ -47,7 +47,7 @@ const DocEditor = ({ selectedDoc, onDocSaved, onDocDeleted }) => {
         });
       } else {
         // CREATE
-        const res = await axios.post(`http://203.194.115.16:5000/api/documents`, { title, content }, { headers: { "x-auth-token": token } });
+        const res = await axios.post(`https://203.194.115.16.nip.io/api/documents`, { title, content }, { headers: { "x-auth-token": token } });
         const newDoc = res.data;
         socket.emit("docCreated", newDoc);
       }
@@ -71,7 +71,7 @@ const DocEditor = ({ selectedDoc, onDocSaved, onDocDeleted }) => {
 
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`http://203.194.115.16:5000/api/documents/${selectedDoc.doc_id}`, {
+      await axios.delete(`https://203.194.115.16.nip.io/api/documents/${selectedDoc.doc_id}`, {
         headers: { "x-auth-token": token },
       });
 

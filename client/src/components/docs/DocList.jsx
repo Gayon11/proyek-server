@@ -14,7 +14,7 @@ const DocList = ({ onSelectDoc, selectedDocId, refreshTrigger, searchQuery }) =>
   const fetchDocs = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get("http://203.194.115.16:5000/api/documents", {
+      const res = await axios.get("https://203.194.115.16.nip.io/api/documents", {
         headers: { "x-auth-token": token },
       });
       setDocs(res.data);

@@ -29,7 +29,7 @@ const ResetPassword = () => {
 
     setLoading(true);
     try {
-      const res = await axios.post("http://203.194.115.16:5000/api/auth/reset-password", {
+      const res = await axios.post("https://203.194.115.16.nip.io/api/auth/reset-password", {
         token,
         newPassword,
       });

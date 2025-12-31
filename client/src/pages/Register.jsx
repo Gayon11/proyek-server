@@ -34,7 +34,7 @@ const Register = () => {
     }
 
     try {
-      await axios.post("http://203.194.115.16:5000/api/auth/register", {
+      await axios.post("https://203.194.115.16.nip.io/api/auth/register", {
         username,
         email,
         password,

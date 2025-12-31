@@ -17,7 +17,7 @@ const FileList = ({ channelId }) => {
       setLoading(true);
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get(`http://203.194.115.16:5000/api/channels/${channelId}/files`, {
+        const res = await axios.get(`https://203.194.115.16.nip.io/api/channels/${channelId}/files`, {
           headers: { "x-auth-token": token },
         });
         setFiles(res.data);
@@ -34,7 +34,7 @@ const FileList = ({ channelId }) => {
   // Fungsi helper untuk membuka file
   const openFile = (url) => {
     // Membuka file di tab baru (browser akan otomatis download atau menampilkan pdf/gambar)
-    window.open(`http://203.194.115.16:5000${url}`, "_blank");
+    window.open(`https://203.194.115.16.nip.io${url}`, "_blank");
   };
 
   if (!channelId) {
@@ -71,7 +71,7 @@ const FileList = ({ channelId }) => {
             >
               {/* Preview Gambar */}
               {file.file_type === "image" ? (
-                <div className="file-thumbnail image-type" style={{ backgroundImage: `url(http://203.194.115.16:5000${file.file_url})` }} />
+                <div className="file-thumbnail image-type" style={{ backgroundImage: `url(https://203.194.115.16.nip.io${file.file_url})` }} />
               ) : (
                 /* Preview Dokumen */
                 <div className="file-thumbnail doc-type">

@@ -13,7 +13,7 @@ const ContactList = ({ onStartDm, onlineUsers, searchQuery }) => {
     const fetchUsers = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get("http://203.194.115.16:5000/api/users", {
+        const res = await axios.get("https://203.194.115.16.nip.io/api/users", {
           headers: { "x-auth-token": token },
         });
 
@@ -64,7 +64,7 @@ const ContactList = ({ onStartDm, onlineUsers, searchQuery }) => {
                 <div className="contact-list-avatar-container">
                   <div className="contact-list-avatar">
                     {/* Jika ada avatar, tampilkan gambar. Jika tidak, inisial */}
-                    {user.avatar_url ? <img src={`http://203.194.115.16:5000${user.avatar_url}`} alt="ava" style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : user.username.charAt(0).toUpperCase()}
+                    {user.avatar_url ? <img src={`https://203.194.115.16.nip.io${user.avatar_url}`} alt="ava" style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : user.username.charAt(0).toUpperCase()}
                   </div>
                   {isOnline && <div className="online-indicator"></div>}
                 </div>

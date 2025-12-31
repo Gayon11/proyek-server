@@ -29,7 +29,7 @@ const CreateGroupModal = ({ isOpen, onClose, onGroupCreated }) => {
 
       // 4. Panggil API Backend
       const res = await axios.post(
-        "http://203.194.115.16:5000/api/channels",
+        "https://203.194.115.16.nip.io/api/channels",
         { name: groupName, description: description }, // Ini adalah 'body'
         {
           headers: {

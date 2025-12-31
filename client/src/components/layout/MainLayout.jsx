@@ -77,7 +77,7 @@ const MainLayout = () => {
         return;
       }
       try {
-        const res = await axios.get("http://203.194.115.16:5000/api/channels", { headers: { "x-auth-token": token } });
+        const res = await axios.get("https://203.194.115.16.nip.io/api/channels", { headers: { "x-auth-token": token } });
         setChannels(res.data);
       } catch (err) {
         console.error(err);
@@ -159,7 +159,7 @@ const MainLayout = () => {
       if (currentUser && data.members.includes(currentUser.id)) {
         const token = localStorage.getItem("token");
         if (token) {
-          axios.get("http://203.194.115.16:5000/api/channels", { headers: { "x-auth-token": token } }).then((res) => {
+          axios.get("https://203.194.115.16.nip.io/api/channels", { headers: { "x-auth-token": token } }).then((res) => {
             // AMBIL DATA TERBARU
             const freshChannels = res.data;
             const currentOpenId = selectedChannelIdRef.current;
@@ -240,7 +240,7 @@ const MainLayout = () => {
       setChannels((prev) => prev.map((c) => (c.channel_id === id ? { ...c, unread_count: 0 } : c)));
       try {
         const t = localStorage.getItem("token");
-        await axios.put(`http://203.194.115.16:5000/api/channels/${id}/read`, null, { headers: { "x-auth-token": t } });
+        await axios.put(`https://203.194.115.16.nip.io/api/channels/${id}/read`, null, { headers: { "x-auth-token": t } });
       } catch (e) {}
     }
   };
@@ -259,13 +259,13 @@ const MainLayout = () => {
   const handleStartDm = async (targetUserId) => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.post("http://203.194.115.16:5000/api/channels/dm", { targetUserId }, { headers: { "x-auth-token": token } });
+      const res = await axios.post("https://203.194.115.16.nip.io/api/channels/dm", { targetUserId }, { headers: { "x-auth-token": token } });
       const dmChannelId = res.data.channel_id;
       socket.emit("dmCreated", { members: [user.id, targetUserId] });
       setActiveTab("messenger");
 
       // Manual fetch karena tidak bisa panggil useEffect
-      const resChannels = await axios.get("http://203.194.115.16:5000/api/channels", { headers: { "x-auth-token": token } });
+      const resChannels = await axios.get("https://203.194.115.16.nip.io/api/channels", { headers: { "x-auth-token": token } });
       setChannels(resChannels.data);
 
       setSelectedChannelId(dmChannelId);

@@ -36,10 +36,10 @@ const ChatWindow = ({ channelId, onClearSelection, onGroupDeleted }) => {
       const token = localStorage.getItem("token");
       try {
         const [dataRes, channelsRes] = await Promise.all([
-          axios.get(`http://203.194.115.16:5000/api/messages/${channelId}`, {
+          axios.get(`https://203.194.115.16.nip.io/api/messages/${channelId}`, {
             headers: { "x-auth-token": token },
           }),
-          axios.get("http://203.194.115.16:5000/api/channels", {
+          axios.get("https://203.194.115.16.nip.io/api/channels", {
             headers: { "x-auth-token": token },
           }),
         ]);
@@ -155,7 +155,7 @@ const ChatWindow = ({ channelId, onClearSelection, onGroupDeleted }) => {
     formData.append("file", file);
 
     try {
-      const res = await axios.post("http://203.194.115.16:5000/api/upload", formData, {
+      const res = await axios.post("https://203.194.115.16.nip.io/api/upload", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       const { fileUrl, fileType, originalName } = res.data;
@@ -211,7 +211,7 @@ const ChatWindow = ({ channelId, onClearSelection, onGroupDeleted }) => {
         {messages.map((msg) => {
           const isMine = msg.user_id === user.id;
 
-          const avatarSrc = msg.sender_avatar ? `http://203.194.115.16:5000${msg.sender_avatar}` : null;
+          const avatarSrc = msg.sender_avatar ? `https://203.194.115.16.nip.io${msg.sender_avatar}` : null;
           const initial = msg.sender_username ? msg.sender_username.charAt(0).toUpperCase() : "?";
 
           return (
@@ -235,14 +235,14 @@ const ChatWindow = ({ channelId, onClearSelection, onGroupDeleted }) => {
 
                   {msg.file_url && msg.file_type === "image" && (
                     <div className="message-image">
-                      <img src={`http://203.194.115.16:5000${msg.file_url}`} alt="Attachment" onClick={() => window.open(`http://203.194.115.16:5000${msg.file_url}`, "_blank")} />
+                      <img src={`https://203.194.115.16.nip.io${msg.file_url}`} alt="Attachment" onClick={() => window.open(`https://203.194.115.16.nip.io${msg.file_url}`, "_blank")} />
                       <div style={{ fontSize: "0.8rem", marginTop: "5px", opacity: 0.8 }}>{msg.content}</div>
                     </div>
                   )}
 
                   {msg.file_url && msg.file_type === "file" && (
                     <div className="message-file" style={{ marginTop: "5px" }}>
-                      <a href={`http://203.194.115.16:5000${msg.file_url}`} target="_blank" rel="noopener noreferrer" style={{ color: isMine ? "#fff" : "#3f0e40", fontWeight: "bold", display: "flex", alignItems: "center", gap: "5px" }}>
+                      <a href={`https://203.194.115.16.nip.io${msg.file_url}`} target="_blank" rel="noopener noreferrer" style={{ color: isMine ? "#fff" : "#3f0e40", fontWeight: "bold", display: "flex", alignItems: "center", gap: "5px" }}>
                         <i className="bi bi-file-earmark-text" style={{ fontSize: "1.2rem" }}></i> {msg.content || "Lihat Lampiran"}
                       </a>
                     </div>

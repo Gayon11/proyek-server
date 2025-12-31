@@ -39,7 +39,7 @@ const CalendarPage = () => {
   const fetchEvents = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get("http://203.194.115.16:5000/api/events", {
+      const res = await axios.get("https://203.194.115.16.nip.io/api/events", {
         headers: { "x-auth-token": token },
       });
 
@@ -132,7 +132,7 @@ const CalendarPage = () => {
     if (!window.confirm("Hapus acara ini?")) return;
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`http://203.194.115.16:5000/api/events/${id}`, { headers: { "x-auth-token": token } });
+      await axios.delete(`https://203.194.115.16.nip.io/api/events/${id}`, { headers: { "x-auth-token": token } });
       fetchEvents();
       setIsModalOpen(false);
     } catch (e) {

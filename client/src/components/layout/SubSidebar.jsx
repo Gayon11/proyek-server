@@ -21,7 +21,7 @@ const SubSidebar = ({ channels, loading, onChannelSelect, selectedChannelId, onG
         return {
           // Tampilkan Nama + Role
           name: `${otherMember.username} (${otherMember.role})`,
-          avatar: otherMember.avatar_url ? `http://203.194.115.16:5000${otherMember.avatar_url}` : null,
+          avatar: otherMember.avatar_url ? `https://203.194.115.16.nip.io${otherMember.avatar_url}` : null,
           initial: otherMember.username.charAt(0).toUpperCase(),
           isDm: true,
         };
@@ -33,7 +33,7 @@ const SubSidebar = ({ channels, loading, onChannelSelect, selectedChannelId, onG
       // Jika Grup
       return {
         name: channel.name,
-        avatar: channel.avatar_url ? `http://203.194.115.16:5000${channel.avatar_url}` : null,
+        avatar: channel.avatar_url ? `https://203.194.115.16.nip.io${channel.avatar_url}` : null,
         initial: "#",
         isDm: false,
       };
