@@ -1,10 +1,10 @@
 // File: client/src/components/video/VideoCall.jsx
-// (FINAL: OPERATOR UI + SCREEN SHARE + STUN + CONTACT INVITE FEATURE)
+// (FINAL FIX: CORRECT CONTACT FETCHING + SORTING)
 
 import React, { useEffect, useRef, useState } from "react";
 import io from "socket.io-client";
 import Peer from "simple-peer";
-import axios from "axios"; // Request HTTP untuk ambil kontak
+import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
 import "./VideoCall.css";
 
@@ -78,20 +78,34 @@ const VideoCall = () => {
     // eslint-disable-next-line
   }, [user]);
 
-  // --- FUNGSI AMBIL KONTAK DARI DATABASE ---
+  // --- FUNGSI AMBIL KONTAK (DIPERBAIKI) ---
   const fetchContacts = async () => {
     try {
-      // Sesuaikan endpoint ini dengan API kontak kamu yang sudah ada
-      const res = await axios.get(`${SERVER_URL}/api/contacts`);
-      setContacts(res.data);
+      // 1. Ambil token
+      const token = localStorage.getItem("token");
+
+      // 2. Request ke endpoint /api/users dengan header x-auth-token
+      const res = await axios.get(`${SERVER_URL}/api/users`, {
+        headers: { "x-auth-token": token },
+      });
+
+      // 3. Urutkan User (Owner -> HRD -> Staf -> Admin)
+      const rolePriority = { owner: 1, hrd: 2, staf: 3, admin: 4 };
+      const sortedUsers = res.data.sort((a, b) => {
+        const priorityA = rolePriority[a.role] || 99;
+        const priorityB = rolePriority[b.role] || 99;
+        return priorityA - priorityB;
+      });
+
+      console.log("Kontak berhasil diambil:", sortedUsers);
+      setContacts(sortedUsers);
       setShowInviteModal(true);
     } catch (err) {
-      console.error("Gagal ambil kontak", err);
-      // Data dummy kalau API belum siap (untuk tes)
-      setContacts([
-        { id: 1, username: "Riyan (hrd)", email: "riyan@tes.com" },
-        { id: 2, username: "Staf1 (staf)", email: "staf1@tes.com" },
-      ]);
+      console.error("Gagal ambil kontak:", err);
+      alert("Gagal memuat kontak. Pastikan Anda sudah login.");
+
+      // Data dummy darurat
+      setContacts([{ user_id: 99, username: "Gagal Memuat Kontak" }]);
       setShowInviteModal(true);
     }
   };
@@ -261,8 +275,10 @@ const VideoCall = () => {
             <h4>📧 Undang Teman</h4>
             <div className="contact-list">
               {contacts.map((c) => (
-                <div key={c.id} className="contact-item" style={{ display: "flex", justifyContent: "space-between", padding: "10px", borderBottom: "1px solid #eee" }}>
-                  <span>{c.username}</span>
+                <div key={c.user_id || c.id} className="contact-item" style={{ display: "flex", justifyContent: "space-between", padding: "10px", borderBottom: "1px solid #eee" }}>
+                  <span>
+                    {c.username} ({c.role})
+                  </span>
                   <button onClick={() => sendInviteTo(c.username)} style={{ background: "#27ae60", color: "white", border: "none", padding: "5px 10px", borderRadius: "5px", cursor: "pointer" }}>
                     Undang
                   </button>
