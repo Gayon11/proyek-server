@@ -1,4 +1,5 @@
 // File: client/src/index.js
+// (FINAL FIX: REMOVE STRICT MODE + ADD AUTH PROVIDER + POLYFILLS)
 
 // 1. SEMUA IMPORT HARUS DI PALING ATAS
 import * as process from "process";
@@ -9,6 +10,9 @@ import { BrowserRouter } from "react-router-dom";
 import "./index.css";
 import App from "./App";
 import Modal from "react-modal";
+
+// PENTING: Import AuthProvider agar login jalan
+import { AuthProvider } from "./context/AuthContext";
 
 // 2. BARU JALANKAN POLYFILL SETELAH IMPORT
 if (typeof window !== "undefined") {
@@ -22,8 +26,12 @@ Modal.setAppElement("#root");
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  // StrictMode dimatikan agar Video Call stabil
+  // StrictMode SUDAH DIMATIKAN (agar Video Call stabil)
   <BrowserRouter>
-    <App />
+    <AuthProvider>
+      {" "}
+      {/* <--- INI WAJIB ADA */}
+      <App />
+    </AuthProvider>
   </BrowserRouter>
 );
