@@ -1,5 +1,5 @@
 // File: client/src/components/video/VideoCall.jsx
-// (FINAL: OPERATOR UI + SCREEN SHARE PERMISSION + REPLACE TRACK)
+// (FINAL: OPERATOR UI + SCREEN SHARE + GOOGLE STUN SERVER FIX)
 
 import React, { useEffect, useRef, useState } from "react";
 import io from "socket.io-client";
@@ -38,6 +38,7 @@ const VideoCall = () => {
   const [isScreenSharing, setIsScreenSharing] = useState(false);
 
   useEffect(() => {
+    // Pastikan URL ini sesuai dengan Backend HTTPS kamu
     socketRef.current = io.connect("https://203.194.115.16.nip.io");
 
     // 1. Cek Role Saat Join
@@ -129,14 +130,31 @@ const VideoCall = () => {
       });
   };
 
+  // --- PERBAIKAN DI SINI: MENAMBAHKAN CONFIG STUN SERVER ---
   function createPeer(userToSignal, callerID, stream) {
-    const peer = new Peer({ initiator: true, trickle: false, stream });
+    const peer = new Peer({
+      initiator: true,
+      trickle: false,
+      stream,
+      config: {
+        iceServers: [{ urls: "stun:stun.l.google.com:19302" }, { urls: "stun:global.stun.twilio.com:3478" }],
+      },
+    });
+
     peer.on("signal", (signal) => socketRef.current.emit("sending signal", { userToSignal, callerID, signal }));
     return peer;
   }
 
   function addPeer(incomingSignal, callerID, stream) {
-    const peer = new Peer({ initiator: false, trickle: false, stream });
+    const peer = new Peer({
+      initiator: false,
+      trickle: false,
+      stream,
+      config: {
+        iceServers: [{ urls: "stun:stun.l.google.com:19302" }, { urls: "stun:global.stun.twilio.com:3478" }],
+      },
+    });
+
     peer.on("signal", (signal) => socketRef.current.emit("returning signal", { signal, callerID }));
     peer.signal(incomingSignal);
     return peer;
