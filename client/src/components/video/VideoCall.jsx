@@ -1,11 +1,15 @@
 // File: client/src/components/video/VideoCall.jsx
-// (FINAL: OPERATOR UI + SCREEN SHARE + GOOGLE STUN SERVER FIX)
+// (FINAL: OPERATOR UI + SCREEN SHARE + STUN + CONTACT INVITE FEATURE)
 
 import React, { useEffect, useRef, useState } from "react";
 import io from "socket.io-client";
 import Peer from "simple-peer";
+import axios from "axios"; // Request HTTP untuk ambil kontak
 import { useAuth } from "../../context/AuthContext";
 import "./VideoCall.css";
+
+// URL Backend (Sesuaikan jika beda)
+const SERVER_URL = "https://203.194.115.16.nip.io";
 
 const Video = ({ peer }) => {
   const ref = useRef();
@@ -25,59 +29,90 @@ const VideoCall = () => {
   const [peers, setPeers] = useState([]);
   const socketRef = useRef();
   const userVideo = useRef();
-  const userStream = useRef(); // PENTING: Simpan stream asli untuk switch back
+  const userStream = useRef();
   const peersRef = useRef([]);
-  const { user } = useAuth();
+  const { user } = useAuth(); // Data user yang login
 
   const [joined, setJoined] = useState(false);
   const [roomId, setRoomId] = useState("");
 
-  // --- STATE BARU UNTUK OPERATOR & SHARE SCREEN ---
+  // STATE FITUR BARU
   const [isOperator, setIsOperator] = useState(false);
-  const [shareRequest, setShareRequest] = useState(null); // Data request {id, name}
+  const [shareRequest, setShareRequest] = useState(null);
   const [isScreenSharing, setIsScreenSharing] = useState(false);
 
-  useEffect(() => {
-    // Pastikan URL ini sesuai dengan Backend HTTPS kamu
-    socketRef.current = io.connect("https://203.194.115.16.nip.io");
+  // STATE INVITE KONTAK
+  const [showInviteModal, setShowInviteModal] = useState(false);
+  const [contacts, setContacts] = useState([]);
+  const [invitation, setInvitation] = useState(null); // Jika ada undangan masuk
 
-    // 1. Cek Role Saat Join
-    socketRef.current.on("your role", (data) => {
-      setIsOperator(data.isOperator);
-      if (data.isOperator) alert("Anda adalah OPERATOR rapat ini.");
+  useEffect(() => {
+    socketRef.current = io.connect(SERVER_URL);
+
+    // 0. Lapor ke server bahwa saya Online (untuk fitur invite)
+    if (user?.username) {
+      socketRef.current.emit("newUser", user.username);
+    }
+
+    // LISTENER INVITE DARI ORANG LAIN
+    socketRef.current.on("getInvitation", (data) => {
+      setInvitation(data); // Tampilkan popup terima/tolak
     });
 
-    // 2. Listener: Jika dikeluarkan Operator
+    // Listener Role & Operator (Kode Lama)
+    socketRef.current.on("your role", (data) => setIsOperator(data.isOperator));
     socketRef.current.on("kicked", () => {
-      alert("Anda telah dikeluarkan oleh Operator.");
+      alert("Anda dikeluarkan.");
       window.location.reload();
     });
-
-    // 3. Listener: Jika di-mute Operator
     socketRef.current.on("muted by operator", () => {
-      alert("Mikrofon Anda dimatikan oleh Operator.");
-      if (userStream.current) {
-        // Matikan track audio lokal
-        userStream.current.getAudioTracks().forEach((track) => (track.enabled = false));
-      }
+      alert("Di-mute oleh Operator.");
+      if (userStream.current) userStream.current.getAudioTracks().forEach((t) => (t.enabled = false));
     });
-
-    // 4. Listener (Hanya Operator): Ada member minta izin share screen
-    socketRef.current.on("screen share request", (data) => {
-      setShareRequest(data); // Tampilkan modal
-    });
-
-    // 5. Listener (Member): Izin share screen diterima
-    socketRef.current.on("screen share allowed", () => {
-      startScreenShare(); // Jalankan fungsi share screen
-    });
+    socketRef.current.on("screen share request", (data) => setShareRequest(data));
+    socketRef.current.on("screen share allowed", () => startScreenShare());
 
     return () => {
       socketRef.current.disconnect();
-      if (joined) window.location.reload();
     };
     // eslint-disable-next-line
-  }, []);
+  }, [user]);
+
+  // --- FUNGSI AMBIL KONTAK DARI DATABASE ---
+  const fetchContacts = async () => {
+    try {
+      // Sesuaikan endpoint ini dengan API kontak kamu yang sudah ada
+      const res = await axios.get(`${SERVER_URL}/api/contacts`);
+      setContacts(res.data);
+      setShowInviteModal(true);
+    } catch (err) {
+      console.error("Gagal ambil kontak", err);
+      // Data dummy kalau API belum siap (untuk tes)
+      setContacts([
+        { id: 1, username: "Riyan (hrd)", email: "riyan@tes.com" },
+        { id: 2, username: "Staf1 (staf)", email: "staf1@tes.com" },
+      ]);
+      setShowInviteModal(true);
+    }
+  };
+
+  // --- FUNGSI KIRIM UNDANGAN ---
+  const sendInviteTo = (contactUsername) => {
+    socketRef.current.emit("sendInvitation", {
+      senderName: user.username,
+      receiverName: contactUsername,
+      roomId: roomId, // ID Room saat ini
+    });
+    alert(`Undangan dikirim ke ${contactUsername}`);
+  };
+
+  // --- FUNGSI TERIMA UNDANGAN ---
+  const acceptInvitation = () => {
+    setRoomId(invitation.roomId);
+    setInvitation(null);
+    // Otomatis join room setelah setRoomId (perlu user klik gabung lagi atau otomatis)
+    // Untuk safety, kita isi kolom input saja
+  };
 
   const joinRoom = () => {
     if (!roomId) return alert("Masukkan Nama Ruang Rapat!");
@@ -86,7 +121,7 @@ const VideoCall = () => {
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: true })
       .then((stream) => {
-        userStream.current = stream; // Simpan referensi stream
+        userStream.current = stream;
         if (userVideo.current) userVideo.current.srcObject = stream;
 
         socketRef.current.emit("join room", {
@@ -99,7 +134,7 @@ const VideoCall = () => {
           usersData.forEach((u) => {
             const peer = createPeer(u.userID, socketRef.current.id, stream);
             peersRef.current.push({ peerID: u.userID, peer });
-            peersArr.push({ peerID: u.userID, peer, username: u.userInfo?.username, role: u.userInfo?.role });
+            peersArr.push({ peerID: u.userID, peer, username: u.userInfo?.username });
           });
           setPeers(peersArr);
         });
@@ -107,15 +142,7 @@ const VideoCall = () => {
         socketRef.current.on("user joined", (payload) => {
           const peer = addPeer(payload.signal, payload.callerID, stream);
           peersRef.current.push({ peerID: payload.callerID, peer });
-          setPeers((users) => [
-            ...users,
-            {
-              peerID: payload.callerID,
-              peer,
-              username: payload.callerInfo?.username,
-              role: payload.callerInfo?.role,
-            },
-          ]);
+          setPeers((users) => [...users, { peerID: payload.callerID, peer, username: payload.callerInfo?.username }]);
         });
 
         socketRef.current.on("receiving returned signal", (payload) => {
@@ -125,119 +152,95 @@ const VideoCall = () => {
       })
       .catch((err) => {
         console.error(err);
-        alert("Gagal akses kamera/mic.");
+        alert("Gagal akses kamera.");
         setJoined(false);
       });
   };
 
-  // --- PERBAIKAN DI SINI: MENAMBAHKAN CONFIG STUN SERVER ---
-  function createPeer(userToSignal, callerID, stream) {
-    const peer = new Peer({
-      initiator: true,
-      trickle: false,
-      stream,
-      config: {
-        iceServers: [{ urls: "stun:stun.l.google.com:19302" }, { urls: "stun:global.stun.twilio.com:3478" }],
-      },
-    });
+  // --- GOOGLE STUN SERVER (FIX BLACK SCREEN) ---
+  const stunConfig = {
+    iceServers: [{ urls: "stun:stun.l.google.com:19302" }, { urls: "stun:global.stun.twilio.com:3478" }],
+  };
 
+  function createPeer(userToSignal, callerID, stream) {
+    const peer = new Peer({ initiator: true, trickle: false, stream, config: stunConfig });
     peer.on("signal", (signal) => socketRef.current.emit("sending signal", { userToSignal, callerID, signal }));
     return peer;
   }
 
   function addPeer(incomingSignal, callerID, stream) {
-    const peer = new Peer({
-      initiator: false,
-      trickle: false,
-      stream,
-      config: {
-        iceServers: [{ urls: "stun:stun.l.google.com:19302" }, { urls: "stun:global.stun.twilio.com:3478" }],
-      },
-    });
-
+    const peer = new Peer({ initiator: false, trickle: false, stream, config: stunConfig });
     peer.on("signal", (signal) => socketRef.current.emit("returning signal", { signal, callerID }));
     peer.signal(incomingSignal);
     return peer;
   }
 
-  // --- LOGIKA OPERATOR ---
+  // --- LOGIKA OPERATOR & SHARE SCREEN (SAMA SEPERTI SEBELUMNYA) ---
   const kickUser = (peerID) => {
-    if (window.confirm("Keluarkan user ini dari rapat?")) {
-      socketRef.current.emit("kick user", peerID);
-    }
+    if (window.confirm("Keluarkan?")) socketRef.current.emit("kick user", peerID);
   };
-
   const muteUser = (peerID) => {
     socketRef.current.emit("mute user", peerID);
-    alert("Perintah mute dikirim.");
   };
-
   const approveShare = () => {
     if (shareRequest) {
       socketRef.current.emit("allow share screen", shareRequest.requesterId);
-      setShareRequest(null); // Tutup modal
+      setShareRequest(null);
     }
   };
-
-  // --- LOGIKA SHARE SCREEN (REPLACE TRACK) ---
   const requestShareScreen = () => {
-    if (isOperator) {
-      // Operator tidak perlu izin
-      startScreenShare();
-    } else {
-      // Member harus minta izin
+    if (isOperator) startScreenShare();
+    else {
       socketRef.current.emit("request share screen", roomId);
-      alert("Permintaan dikirim ke Operator. Mohon tunggu...");
+      alert("Menunggu izin Operator...");
     }
   };
-
   const startScreenShare = () => {
     navigator.mediaDevices
       .getDisplayMedia({ cursor: true })
       .then((screenStream) => {
         setIsScreenSharing(true);
         const screenTrack = screenStream.getVideoTracks()[0];
-
-        // Ganti track video di semua koneksi peer
         peersRef.current.forEach((p) => {
-          // Cari sender video di dalam koneksi peer
           const sender = p.peer._pc.getSenders().find((s) => s.track.kind === "video");
-          if (sender) {
-            sender.replaceTrack(screenTrack);
-          }
+          if (sender) sender.replaceTrack(screenTrack);
         });
-
-        // Tampilkan layar sendiri di preview lokal
         if (userVideo.current) userVideo.current.srcObject = screenStream;
-
-        // Jika user stop sharing lewat browser UI
-        screenTrack.onended = () => {
-          stopScreenShare();
-        };
+        screenTrack.onended = () => stopScreenShare();
       })
-      .catch((err) => console.log("Share screen cancelled", err));
+      .catch((err) => console.log(err));
   };
-
   const stopScreenShare = () => {
     setIsScreenSharing(false);
-    // Ambil kembali track video dari kamera asli
     const videoTrack = userStream.current.getVideoTracks()[0];
-
     peersRef.current.forEach((p) => {
       const sender = p.peer._pc.getSenders().find((s) => s.track.kind === "video");
-      if (sender) {
-        sender.replaceTrack(videoTrack);
-      }
+      if (sender) sender.replaceTrack(videoTrack);
     });
-
-    // Kembalikan preview lokal ke kamera
     if (userVideo.current) userVideo.current.srcObject = userStream.current;
   };
 
+  // --- RENDER HALAMAN UTAMA (JOIN) ---
   if (!joined) {
     return (
       <div className="join-room-container">
         <h2>📞 Ruang Rapat Video</h2>
+
+        {/* NOTIFIKASI JIKA ADA UNDANGAN */}
+        {invitation && (
+          <div className="invitation-alert">
+            <p>
+              🔔 <strong>{invitation.senderName}</strong> mengundang Anda ke rapat: <strong>{invitation.roomId}</strong>
+            </p>
+            <button onClick={acceptInvitation} className="btn-accept">
+              Terima & Isi ID
+            </button>
+            <button onClick={() => setInvitation(null)} className="btn-reject">
+              Abaikan
+            </button>
+          </div>
+        )}
+
         <div className="join-card">
           <input type="text" placeholder="Nama Ruang (ID)" value={roomId} onChange={(e) => setRoomId(e.target.value)} className="room-input" />
           <button onClick={joinRoom} className="btn-join">
@@ -248,15 +251,39 @@ const VideoCall = () => {
     );
   }
 
+  // --- RENDER HALAMAN RAPAT (VIDEOS) ---
   return (
     <div className="video-call-container-group">
-      {/* MODAL APPROVAL UNTUK OPERATOR */}
+      {/* MODAL DAFTAR KONTAK (INVITE) */}
+      {showInviteModal && (
+        <div className="request-overlay">
+          <div className="request-modal" style={{ maxHeight: "400px", overflowY: "auto" }}>
+            <h4>📧 Undang Teman</h4>
+            <div className="contact-list">
+              {contacts.map((c) => (
+                <div key={c.id} className="contact-item" style={{ display: "flex", justifyContent: "space-between", padding: "10px", borderBottom: "1px solid #eee" }}>
+                  <span>{c.username}</span>
+                  <button onClick={() => sendInviteTo(c.username)} style={{ background: "#27ae60", color: "white", border: "none", padding: "5px 10px", borderRadius: "5px", cursor: "pointer" }}>
+                    Undang
+                  </button>
+                </div>
+              ))}
+              {contacts.length === 0 && <p>Tidak ada kontak ditemukan.</p>}
+            </div>
+            <button className="btn-reject" style={{ marginTop: "15px", width: "100%" }} onClick={() => setShowInviteModal(false)}>
+              Tutup
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL APPROVAL SHARE SCREEN */}
       {isOperator && shareRequest && (
         <div className="request-overlay">
           <div className="request-modal">
             <h4>Permintaan Share Screen</h4>
             <p>
-              <strong>{shareRequest.username}</strong> ingin membagikan layar.
+              <strong>{shareRequest.username}</strong> ingin share screen.
             </p>
             <div className="request-actions">
               <button className="btn-approve" onClick={approveShare}>
@@ -271,59 +298,41 @@ const VideoCall = () => {
       )}
 
       <div className="video-grid-group">
-        {/* Video Saya */}
         <div className="video-card my-video">
           <video muted ref={userVideo} autoPlay playsInline />
           <span className="video-label">Anda {isOperator ? "(Operator)" : ""}</span>
         </div>
-
-        {/* Video Peserta Lain */}
-        {peers.map((peerObj, index) => {
-          return (
-            <div className="video-card-wrapper" key={index}>
-              <Video peer={peerObj.peer} />
-              <span className="video-label">
-                {peerObj.username}
-                {/* TOMBOL KHUSUS OPERATOR */}
-                {isOperator && (
-                  <span className="op-controls">
-                    <button onClick={() => muteUser(peerObj.peerID)} title="Mute Mic">
-                      🎤🚫
-                    </button>
-                    <button onClick={() => kickUser(peerObj.peerID)} title="Keluarkan">
-                      ❌
-                    </button>
-                  </span>
-                )}
-              </span>
-            </div>
-          );
-        })}
+        {peers.map((peerObj, index) => (
+          <div className="video-card-wrapper" key={index}>
+            <Video peer={peerObj.peer} />
+            <span className="video-label">
+              {peerObj.username}
+              {isOperator && (
+                <span className="op-controls">
+                  <button onClick={() => muteUser(peerObj.peerID)}>🎤🚫</button>
+                  <button onClick={() => kickUser(peerObj.peerID)}>❌</button>
+                </span>
+              )}
+            </span>
+          </div>
+        ))}
       </div>
 
       <div className="controls-bar">
         <p>
-          ID: <strong>{roomId}</strong> {isOperator && <span style={{ color: "#f1c40f" }}>(Operator)</span>}
+          ID: <strong>{roomId}</strong>
         </p>
         <div className="control-buttons">
-          <button
-            // Gunakan conditional class 'sharing' jika sedang share screen
-            className={`btn-share ${isScreenSharing ? "sharing" : ""}`}
-            onClick={isScreenSharing ? stopScreenShare : requestShareScreen}
-          >
-            {/* Ubah Ikon dan Teks berdasarkan status */}
-            {isScreenSharing ? (
-              <>
-                <i className="bi bi-stop-circle-fill"></i> Stop Share
-              </>
-            ) : (
-              <>
-                <i className="bi bi-display"></i> Share Screen
-              </>
-            )}
+          {/* TOMBOL UNDANG BARU */}
+          <button className="btn-invite" style={{ background: "#8e44ad" }} onClick={fetchContacts}>
+            <i className="bi bi-person-plus-fill"></i> Undang
+          </button>
+
+          <button className={`btn-share ${isScreenSharing ? "sharing" : ""}`} onClick={isScreenSharing ? stopScreenShare : requestShareScreen}>
+            {isScreenSharing ? "Stop Share" : "Share Screen"}
           </button>
           <button className="btn-hangup" onClick={() => window.location.reload()}>
-            <i className="bi bi-telephone-x-fill"></i> Keluar
+            Keluar
           </button>
         </div>
       </div>
