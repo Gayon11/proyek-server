@@ -271,27 +271,22 @@ const VideoCall = () => {
       {/* MODAL DAFTAR KONTAK (INVITE) */}
       {showInviteModal && (
         <div className="request-overlay">
-          <div className="request-modal">
+          <div className="request-modal" style={{ maxHeight: "400px", overflowY: "auto" }}>
             <h4>📧 Undang Teman</h4>
             <div className="contact-list">
               {contacts.map((c) => (
-                <div key={c.user_id || c.id} className="contact-item">
-                  {/* Nama User (Otomatis Putih lewat CSS) */}
+                <div key={c.user_id || c.id} className="contact-item" style={{ display: "flex", justifyContent: "space-between", padding: "10px", borderBottom: "1px solid #eee" }}>
                   <span>
                     {c.username} ({c.role})
                   </span>
-
-                  {/* Tombol Undang (Pakai Class CSS baru) */}
-                  <button className="btn-invite-action" onClick={() => sendInviteTo(c.username)}>
+                  <button onClick={() => sendInviteTo(c.username)} style={{ background: "#27ae60", color: "white", border: "none", padding: "5px 10px", borderRadius: "5px", cursor: "pointer" }}>
                     Undang
                   </button>
                 </div>
               ))}
-              {contacts.length === 0 && <p style={{ textAlign: "center", padding: "20px" }}>Tidak ada kontak ditemukan.</p>}
+              {contacts.length === 0 && <p>Tidak ada kontak ditemukan.</p>}
             </div>
-
-            {/* Tombol Tutup (Pakai Class CSS baru) */}
-            <button className="btn-close-modal" onClick={() => setShowInviteModal(false)}>
+            <button className="btn-reject" style={{ marginTop: "15px", width: "100%" }} onClick={() => setShowInviteModal(false)}>
               Tutup
             </button>
           </div>
