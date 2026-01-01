@@ -1,267 +1,121 @@
-/* File: client/src/components/video/VideoCall.css */
+/* --- TAMPILAN 3: MODAL INVITE (POPUP MODERN) --- */
+/* Tambahkan ini di bagian paling bawah file VideoCall.css */
 
-/* --- TAMPILAN 1: LOBBY (JOIN ROOM) --- */
-.join-room-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
+.request-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
-  background-color: #202124; /* Dark Grey ala Google Meet */
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85); /* Latar belakang gelap transparan */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  backdrop-filter: blur(5px); /* Efek blur mewah di belakang */
+}
+
+.request-modal {
+  background: #303134; /* Warna abu gelap Google Meet */
+  padding: 25px;
+  border-radius: 16px; /* Sudut membulat */
+  width: 90%;
+  max-width: 450px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
   color: #e8eaed;
-}
-
-.join-room-container h2 {
-  margin-bottom: 10px;
-  font-size: 2rem;
-}
-
-.join-room-container p {
-  color: #9aa0a6;
-  margin-bottom: 30px;
-}
-
-.join-card {
-  background-color: #303134;
-  padding: 40px;
-  border-radius: 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  width: 100%;
-  max-width: 400px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-}
-
-.room-input {
-  padding: 12px 15px;
-  border-radius: 4px;
   border: 1px solid #5f6368;
-  background-color: #202124;
-  color: white;
-  font-size: 1rem;
-  outline: none;
-  transition: border 0.2s;
 }
 
-.room-input:focus {
-  border-color: #8ab4f8; /* Biru Google */
+.request-modal h4 {
+  margin-top: 0;
+  border-bottom: 1px solid #5f6368;
+  padding-bottom: 15px;
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+  color: white; /* Judul Putih */
+  text-align: center;
 }
 
-.btn-join {
-  padding: 12px;
-  background-color: #8ab4f8;
-  color: #202124;
-  border: none;
-  border-radius: 4px;
-  font-weight: bold;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: background 0.2s;
+/* Styling List Kontak */
+.contact-list {
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: 5px; /* Spasi untuk scrollbar */
 }
 
-.btn-join:hover {
-  background-color: #aecbfa;
+/* Scrollbar Custom agar rapi */
+.contact-list::-webkit-scrollbar {
+  width: 6px;
+}
+.contact-list::-webkit-scrollbar-thumb {
+  background-color: #5f6368;
+  border-radius: 3px;
 }
 
-/* --- TAMPILAN 2: GRID VIDEO (RAPAT BERLANGSUNG) --- */
-.video-call-container-group {
-  height: 100%;
-  width: 100%;
-  background-color: #202124;
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
-  box-sizing: border-box;
-  overflow: hidden;
-}
-
-/* Grid Responsif Otomatis */
-.video-grid-group {
-  display: grid;
-  /* Otomatis atur kolom: Minimal 300px, sisanya bagi rata */
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
-  flex-grow: 1;
-  align-content: center; /* Pusatkan grid secara vertikal jika sedikit user */
-  overflow-y: auto; /* Scroll jika peserta sangat banyak */
-  margin-bottom: 20px;
-}
-
-/* Wrapper Video */
-.video-card,
-.video-card-wrapper {
-  background: #000;
-  border-radius: 12px;
-  overflow: hidden;
-  position: relative;
-  aspect-ratio: 16/9; /* Jaga rasio aspek video */
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.video-card video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover; /* Video memenuhi kotak */
-}
-
-/* Mirror Effect untuk Video Sendiri */
-.my-video video {
-  transform: scaleX(-1);
-}
-
-/* Label Nama Peserta */
-.video-label {
-  position: absolute;
-  bottom: 15px;
-  left: 15px;
-  background-color: rgba(0, 0, 0, 0.6);
-  color: white;
-  padding: 5px 12px;
-  border-radius: 4px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
-  pointer-events: none;
-}
-
-/* Bar Kontrol di Bawah */
-.controls-bar {
-  height: 70px;
+.contact-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #2c2c2c;
-  padding: 0 30px;
-  border-radius: 12px;
-  color: white;
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
-  flex-shrink: 0;
+  padding: 15px 10px;
+  border-bottom: 1px solid #454545; /* Garis pemisah halus */
+  transition: background 0.2s;
 }
 
-.controls-bar p {
-  margin: 0;
+.contact-item:hover {
+  background-color: rgba(255, 255, 255, 0.05); /* Efek hover saat disentuh */
+}
+
+.contact-item:last-child {
+  border-bottom: none;
+}
+
+/* --- REVISI: NAMA USER PUTIH --- */
+.contact-item span {
   font-size: 1rem;
-  color: #e8eaed;
+  font-weight: 500;
+  color: #ffffff !important; /* WAJIB PUTIH */
 }
 
-.btn-hangup {
-  background-color: #ea4335; /* Merah */
+/* --- TOMBOL UNDANG (Kecil) --- */
+/* Menggunakan Gradient Hijau agar beda dari tombol lain, tapi style sama */
+.btn-invite-action {
+  background: linear-gradient(135deg, #27ae60, #2ecc71);
   color: white;
   border: none;
-  padding: 10px 24px;
-  border-radius: 24px; /* Tombol bulat lonjong */
-  font-weight: bold;
+  padding: 8px 16px;
+  border-radius: 20px; /* Bulat lonjong */
+  font-weight: 600;
   cursor: pointer;
-  font-size: 0.95rem;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  transition: background 0.3s;
-}
-
-.btn-hangup:hover {
-  background-color: #d93025;
-}
-
-.btn-hangup i {
-  font-size: 1.1rem;
-}
-
-/* Badge Kontrol Operator di Video Peserta */
-.op-controls {
-  margin-left: 10px;
-  background: rgba(0, 0, 0, 0.5);
-  padding: 2px 5px;
-  border-radius: 4px;
-}
-
-.op-controls button {
-  background: none;
-  border: none;
-  color: white;
-  cursor: pointer;
-  margin: 0 2px;
+  box-shadow: 0 4px 6px rgba(39, 174, 96, 0.3);
+  transition: all 0.3s ease;
   font-size: 0.9rem;
 }
 
-.op-controls button:hover {
-  color: #ff6b6b;
+.btn-invite-action:hover {
+  transform: translateY(-2px); /* Naik sedikit saat dihover */
+  box-shadow: 0 6px 12px rgba(39, 174, 96, 0.5);
+  background: linear-gradient(135deg, #2ecc71, #27ae60);
 }
 
-/* --- UPDATE BAGIAN KONTROL TOMBOL --- */
-
-.control-buttons {
-  display: flex;
-  gap: 15px;
-}
-
-/* Styling Dasar Tombol Share */
-.btn-share {
-  /* Gradien Biru Modern */
-  background: linear-gradient(135deg, #3498db, #2980b9);
+/* --- TOMBOL TUTUP (Besar) --- */
+/* Menggunakan Gradient Merah (Sama persis tombol Keluar) */
+.btn-close-modal {
+  background: linear-gradient(135deg, #c0392b, #e74c3c);
   color: white;
+  width: 100%;
+  padding: 12px;
+  margin-top: 20px;
   border: none;
-  padding: 12px 24px; /* Sedikit lebih besar */
-  border-radius: 30px; /* Lebih bulat */
-  font-weight: 600;
-  cursor: pointer;
-  font-size: 1rem;
-  display: flex;
-  align-items: center;
-  gap: 10px; /* Jarak antara ikon dan teks */
-  box-shadow: 0 4px 6px rgba(52, 152, 219, 0.3); /* Bayangan biru halus */
-  transition: all 0.3s ease; /* Transisi halus untuk semua efek */
-}
-
-/* Efek Hover saat tombol Share aktif */
-.btn-share:hover {
-  transform: translateY(-2px); /* Tombol sedikit naik */
-  box-shadow: 0 6px 12px rgba(52, 152, 219, 0.5); /* Bayangan makin jelas */
-  background: linear-gradient(135deg, #4aa3df, #3498db); /* Warna sedikit lebih terang */
-}
-
-/* Styling saat sedang Sharing (Kelas .sharing ditambahkan di JSX) */
-.btn-share.sharing {
-  /* Gradien Merah/Oranye untuk "Stop" */
-  background: linear-gradient(135deg, #e74c3c, #c0392b);
-  box-shadow: 0 4px 6px rgba(231, 76, 60, 0.3); /* Bayangan merah halus */
-}
-
-/* Efek Hover saat sedang Sharing */
-.btn-share.sharing:hover {
-  background: linear-gradient(135deg, #ff6b6b, #e74c3c);
-  box-shadow: 0 6px 12px rgba(231, 76, 60, 0.5);
-}
-
-/* Ikon di dalam tombol */
-.btn-share i {
-  font-size: 1.2rem;
-}
-
-/* Update juga tombol Hangup agar seragam style-nya */
-.btn-hangup {
-  background: linear-gradient(135deg, #ea4335, #d32f2f);
-  color: white;
-  border: none;
-  padding: 12px 24px;
   border-radius: 30px;
-  font-weight: 600;
-  cursor: pointer;
+  font-weight: bold;
   font-size: 1rem;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  box-shadow: 0 4px 6px rgba(234, 67, 53, 0.3);
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(192, 57, 43, 0.3);
   transition: all 0.3s ease;
 }
 
-.btn-hangup:hover {
+.btn-close-modal:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(234, 67, 53, 0.5);
-  background: linear-gradient(135deg, #ff6659, #ea4335);
+  box-shadow: 0 6px 12px rgba(192, 57, 43, 0.5);
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
 }
